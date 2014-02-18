@@ -1,24 +1,11 @@
-var sql = require('mssql');
+var http = require("http");
 
-var config = {
-    user: 'mp',
-    password: '101010',
-    server: 'localhost',
-    database: 'IBIS'
-}
+var options = {host: "http://localhost", path: "/rest/api/values" }
 
-var connection = new sql.Connection(config, function(err) {
-    // ... error checks
-
-    // Query
-
-    var request = new sql.Request(connection); // or: var request = connection.request();
-    request.query('SELECT * FROM ActiveAlarms', function(err, recordset) {
-        // ... error checks
-
-        console.dir(recordset);
+http.get("http://localhost/rest/api/values",function (res) {
+    console.log(res.responseText)
+}).on("error", function (error) {
+        console.log("Error" + error)
     });
 
 
-
-});
