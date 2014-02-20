@@ -18,7 +18,9 @@
     ],
     "dependencies" : {
         "requestify"   :  "*",
-        "redis": "*"
+        "redis": "*",
+        "express": "*",
+        "sockjs":"*"
     },
     "analyze": true,
     "license": "MIT",
