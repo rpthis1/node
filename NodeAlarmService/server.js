@@ -1,39 +1,36 @@
+var alarmsCache = require("./custom_modules/alarmsCache");
 var http = require("http");
 var redis = require("redis");
-
-var client = redis.createClient("6379", "localhost");
-var client2 = redis.createClient("6379", "localhost");
-var options = {host: "http://localhost", path: "/rest/api/values" }
-var req;
-var oldAlarmString;
-setInterval(getAlarms, 2000)
-
-
-function callBack(res) {
-
-    var bodyChunks = [];
-    res.on('data',function (chunk) {
-        bodyChunks.push(chunk);
-    }).on('end', function () {
-            var body = Buffer.concat(bodyChunks);
-            client.get('alarms', function (err, resp) {
-                oldAlarmString = resp;
-            });
-            if (oldAlarmString !== body.toString()) {
-                client.set('alarms', body.toString());
-                client.publish("alarmsChannel", "change");
-                console.log("pub");
-            }
-        })
-};
+var sockjs = require("sockjs");
+var express = require("express");
+var sockjsOpts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
+var sockjsServer = sockjs.createServer(sockjsOpts);
+var app = express();
+var server = http.createServer(app);
 
 
-function getAlarms() {
-    req = http.get("http://localhost/rest/api/alarm", callBack);
-    req.on("error", function (error) {
-        console.log("Error" + error)
+sockjsServer.on("connection", function (connection){
+
+    var browser = redis.createClient("6379", "54.213.134.12");
+    browser.psubscribe("alarmsChannel");
+    browser.on("pmessage",function(pattern,channel,message){
+        connection.write(message);
+
+        console.log("message");
     });
-}
+});
+
+sockjsServer.installHandlers(server,{prefix:"/alarms"});
+
+
+app.get("/", function (req,res){
+    res.sendfile(__dirname + "/index.html");
+});
+
+server.listen(8088);
+alarmsCache();
+
+
 
 
 
