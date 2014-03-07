@@ -20,7 +20,8 @@
         "requestify"   :  "*",
         "redis": "*",
         "express": "*",
-        "sockjs":"*"
+        "sockjs":"*",
+        "xml2js": "*"
     },
     "analyze": true,
     "license": "MIT",
