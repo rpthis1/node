@@ -11,9 +11,17 @@ var server = http.createServer(app);
 
 sockjsServer.on("connection", function (connection){
 
-    var browser = redis.createClient("6379", "54.213.134.12");
-    browser.psubscribe("alarmsChannel");
-    browser.on("pmessage",function(pattern,channel,message){
+    var redisClient = redis.createClient("6379", "54.213.134.12");
+
+
+   /** Write current alarm count on initial connection **/
+    connection.write(alarmsCache.activeAlarmsCount)
+
+  /** Subscribe to changes in the alarm count for future notifications **/
+    redisClient.psubscribe("alarmsChannel");
+
+
+    redisClient.on("pmessage",function(pattern,channel,message){
         connection.write(message);
 
         console.log("message");
@@ -28,7 +36,7 @@ app.get("/", function (req,res){
 });
 
 server.listen(8088);
-alarmsCache();
+alarmsCache.init();
 
 
 

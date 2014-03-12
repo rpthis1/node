@@ -74,9 +74,10 @@ function publishChanges()
 
 var initialize = function ()
 {
-    setTimeout(getAlarms, 2000)
+    setTimeout(getAlarms, 1000)
 }
 
-module.exports = initialize;
+module.exports.init = initialize;
+module.exports.activeAlarmsCount = activeAlarmsCount;
 
 
