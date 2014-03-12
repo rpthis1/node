@@ -8,7 +8,7 @@ var xml2js = require('xml2js');
 var client = redis.createClient("6379", "54.213.134.12");
 var parser = new xml2js.Parser();
 
-var activeAlarmsCount= "";
+var activeAlarmsCount= "mes";
 var activeAlarmsArray;
 var req;
 var oldAlarmString;
@@ -22,7 +22,8 @@ function extractXML(err,result)
     if( activeAlarmsArray)
     {
         activeAlarmsCount = activeAlarmsArray[0].alarm.length;
-        console.log("there are " + activeAlarmsCount + " Alarm(s)");
+        module.exports.activeAlarmsCount = activeAlarmsCount;
+       // console.log("there are " + activeAlarmsCount + " Alarm(s)");
     }
 
 
@@ -44,7 +45,7 @@ function callBack(res) {
             client.get('alarms', function (err, resp) {
                 oldAlarmString = resp;
                 newAlarmString = body.toString();
-                console.log("read it..");
+               // console.log("read it..");
                 publishChanges();
 
             });
@@ -78,6 +79,6 @@ var initialize = function ()
 }
 
 module.exports.init = initialize;
-module.exports.activeAlarmsCount = activeAlarmsCount;
+
 
 

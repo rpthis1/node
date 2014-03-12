@@ -15,7 +15,9 @@ sockjsServer.on("connection", function (connection){
 
 
    /** Write current alarm count on initial connection **/
-    connection.write(alarmsCache.activeAlarmsCount)
+    connection.write(alarmsCache.alarmCount)
+
+    console.log("First Connection : "+ alarmsCache.activeAlarmsCount );
 
   /** Subscribe to changes in the alarm count for future notifications **/
     redisClient.psubscribe("alarmsChannel");
