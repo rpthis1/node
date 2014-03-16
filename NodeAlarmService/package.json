@@ -21,7 +21,8 @@
         "redis": "*",
         "express": "*",
         "sockjs":"*",
-        "xml2js": "*"
+        "xml2js": "*",
+        "primus.io": "*"
     },
     "analyze": true,
     "license": "MIT",

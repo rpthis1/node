@@ -8,7 +8,7 @@ var xml2js = require('xml2js');
 var client = redis.createClient("6379", "54.213.134.12");
 var parser = new xml2js.Parser();
 
-var activeAlarmsCount= "mes";
+var activeAlarmsCount= "0";
 var activeAlarmsArray;
 var req;
 var oldAlarmString;
