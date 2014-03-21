@@ -22,7 +22,8 @@
         "express": "*",
         "sockjs":"*",
         "xml2js": "*",
-        "primus.io": "*"
+        "primus.io": "*",
+        "couchbase": "*"
     },
     "analyze": true,
     "license": "MIT",

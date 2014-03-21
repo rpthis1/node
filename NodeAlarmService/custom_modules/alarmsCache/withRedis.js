@@ -2,19 +2,10 @@
  * Created by meme on 2/28/14.
  */
 var http = require("http");
-var couch = require("couchbase");
+var redis = require("redis");
 var xml2js = require('xml2js');
 
-var db = new couch.Connection({"host":"ec2-54-213-134-12.us-west-2.compute.amazonaws.com","bucket":"points2", "password":"101010" }, function (err,couch){
-
-    console.log("couch connection.....");
-    if( err)
-    {
-        console.log("couch connection Error.....");
-        throw(err);
-    }
-});
-
+var client = redis.createClient("6379", "54.213.134.12");
 var parser = new xml2js.Parser();
 
 var activeAlarmsCount= "0";
@@ -22,7 +13,6 @@ var activeAlarmsArray;
 var req;
 var oldAlarmString;
 var newAlarmString;
-var alarmsStore = {activeAlarms:""};
 
 
 function extractXML(err,result)
@@ -48,21 +38,17 @@ function callBack(res) {
         bodyChunks.push(chunk);
     }).on('end', function () {
 
-            console.log("got alarms from API");
-
             var body = Buffer.concat(bodyChunks);
 
             parser.parseString(body, extractXML);
 
-  /*          db.get('alarms', function (err, resp) {
-
-                oldAlarmString = resp.activeAlarms;
+            client.get('alarms', function (err, resp) {
+                oldAlarmString = resp;
                 newAlarmString = body.toString();
-                 console.log("read it couch.. :" + resp);
+               // console.log("read it..");
                 publishChanges();
 
-
-            });*/
+            });
 
         })
 };
@@ -80,13 +66,8 @@ function publishChanges()
 {
     if (oldAlarmString !== newAlarmString)
     {
-        alarmsStore.activeAlarms = newAlarmString;
-        db.set('alarms', alarmsStore, function(err,resp){
-
-            console.log("dp update..");
-
-        });
-        //client.publish("alarmsChannel", activeAlarmsCount.toString());
+        client.set('alarms', newAlarmString);
+        client.publish("alarmsChannel", activeAlarmsCount.toString());
         console.log("pub");
     }
     setTimeout(getAlarms, 2000);
