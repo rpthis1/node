@@ -1,5 +1,6 @@
 var Primus = require("primus.io");
 var alarmsCache = require("./custom_modules/alarmsCache");
+var valuesCache = require("./custom_modules/valuesCache");
 var server = require("http").createServer();
 
 
@@ -21,5 +22,7 @@ primus.on("connection", function (spark) {
 });
 
 server.listen(8080);
-alarmsCache.init();
+//alarmsCache.init();
+console.log(valuesCache.config);
+
 

@@ -5,7 +5,7 @@ var http = require("http");
 var couch = require("couchbase");
 var xml2js = require('xml2js');
 
-var db = new couch.Connection({"host":"ec2-54-213-134-12.us-west-2.compute.amazonaws.com","bucket":"points2", "password":"101010" }, function (err,couch){
+var db = new couch.Connection({"host":"ec2-54-213-134-12.us-west-2.compute.amazonaws.com" , "bucket":"points2", "password":"101010" }, function (err,couch){
 
     console.log("couch connection.....");
     if( err)
@@ -20,8 +20,8 @@ var parser = new xml2js.Parser();
 var activeAlarmsCount= "0";
 var activeAlarmsArray;
 var req;
-var oldAlarmString;
-var newAlarmString;
+var oldAlarmString ="old";
+var newAlarmString = "new";
 var alarmsStore = {activeAlarms:""};
 
 
@@ -35,8 +35,6 @@ function extractXML(err,result)
         module.exports.activeAlarmsCount = activeAlarmsCount;
        // console.log("there are " + activeAlarmsCount + " Alarm(s)");
     }
-
-
 
 }
 
@@ -54,15 +52,20 @@ function callBack(res) {
 
             parser.parseString(body, extractXML);
 
-  /*          db.get('alarms', function (err, resp) {
+            db.get('alarms', function (err, resp) {
 
-                oldAlarmString = resp.activeAlarms;
+                if( resp.value)
+                {
+
+                oldAlarmString = resp.value.activeAlarms;
                 newAlarmString = body.toString();
-                 console.log("read it couch.. :" + resp);
+                 console.log("read it couch.. :" + resp.value.activeAlarms);
+
+                }
                 publishChanges();
 
 
-            });*/
+            });
 
         })
 };
