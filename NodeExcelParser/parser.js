@@ -3,7 +3,7 @@
  */
 
 var xlsx = require('node-xlsx');
-var obj = xlsx.parse('C:/Users/me/WebstormProjects/NodeExcelParser/schedules.xlsx');
+var obj = xlsx.parse('C:/Users/me/WebstormProjects/node/NodeExcelParser/TESchedules.xlsx');
 
 
 var ws = obj.worksheets[0];
@@ -22,15 +22,16 @@ for ( var i = 1; i< wsData.length;i++)
     index++;
     row = wsData[i];
     schID = row[0].value;
-    schName = row[1].value;
+    group = row[1].value;
+    schName = row[2].value;
 
-    if( row[6] === undefined )
+    if( row[4] === undefined )
     {
         description = "";
     }
     else
     {
-        description = row[6].value;
+        description = row[4].value;
     }
 
 /*    console.log(index + "");
@@ -47,10 +48,15 @@ for ( var i = 1; i< wsData.length;i++)
     console.log("");
     */
 
+
+
+
     xml = "<data><rp></rp><description>" + description  + "</description><group>" + group + "</group></data>";
 
     var b = new Buffer(xml);
     encoded = b.toString('base64');
+
+
 
     console.log("UPDATE dbo.Mnt_MaintenanceSchedule");
     console.log("SET Description = " + "'" + encoded +  "'");
@@ -62,6 +68,8 @@ for ( var i = 1; i< wsData.length;i++)
 
 
 }
+
+console.log(index);
 
 
 

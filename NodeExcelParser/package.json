@@ -18,7 +18,8 @@
     ],
     "dependencies" : {
         "excel-parser"   :  "*",
-        "node-xlsx": "*"
+        "node-xlsx": "*",
+        "xml2js": "*"
     },
     "analyze": true,
     "license": "MIT",
