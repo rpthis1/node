@@ -23,6 +23,7 @@ primus.on("connection", function (spark) {
 
 server.listen(8080);
 //alarmsCache.init();
+valuesCache.init();
 console.log(valuesCache.config);
 
 
