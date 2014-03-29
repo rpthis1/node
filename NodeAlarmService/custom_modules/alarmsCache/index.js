@@ -89,11 +89,15 @@ function publishChanges()
         db.set('alarms', alarmsStore, function(err,resp){
 
           //  console.log("dp update..");
+            setTimeout(getAlarms, 2000);
 
         });
         messageBus.send("newAlarms", {count:activeAlarmsCount.toString() });
     }
+    else
+    {
     setTimeout(getAlarms, 2000);
+    }
 }
 
 var initialize = function ()
