@@ -4,6 +4,8 @@
 var http = require("http");
 var couch = require("couchbase");
 var xml2js = require('xml2js');
+var path = require("path");
+var messageBus = require(path.join(__dirname, "..", "messageBus"));
 
 var db = new couch.Connection({"host":"ec2-54-213-134-12.us-west-2.compute.amazonaws.com" , "bucket":"points2", "password":"101010" }, function (err,couch){
 
@@ -33,7 +35,7 @@ function extractXML(err,result)
     {
         activeAlarmsCount = activeAlarmsArray[0].alarm.length;
         module.exports.activeAlarmsCount = activeAlarmsCount;
-       // console.log("there are " + activeAlarmsCount + " Alarm(s)");
+
     }
 
 }
@@ -46,7 +48,7 @@ function callBack(res) {
         bodyChunks.push(chunk);
     }).on('end', function () {
 
-            console.log("got alarms from API");
+          //  console.log("got alarms from API");
 
             var body = Buffer.concat(bodyChunks);
 
@@ -59,7 +61,7 @@ function callBack(res) {
 
                 oldAlarmString = resp.value.activeAlarms;
                 newAlarmString = body.toString();
-                 console.log("read it couch.. :" + resp.value.activeAlarms);
+                 //console.log("read it couch.. :" + resp.value.activeAlarms);
 
                 }
                 publishChanges();
@@ -86,11 +88,10 @@ function publishChanges()
         alarmsStore.activeAlarms = newAlarmString;
         db.set('alarms', alarmsStore, function(err,resp){
 
-            console.log("dp update..");
+          //  console.log("dp update..");
 
         });
-        //client.publish("alarmsChannel", activeAlarmsCount.toString());
-        console.log("pub");
+        messageBus.send("newAlarms", {count:activeAlarmsCount.toString() });
     }
     setTimeout(getAlarms, 2000);
 }
