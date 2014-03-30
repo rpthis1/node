@@ -13,28 +13,23 @@ var connections = [];
 
 primus.on("connection", function (connection) {
 
+    console.log("client connected.." + connection);
 
-    var client = {client: connection,
-        sendNewAlarms: function (alarms) {
-
-            this.connection.send("newAlarms", alarms);
-
-        }, sendNewData: function (data) {
-            this.connection.send("newData", data);
-
-        }, sendCurrentAlarms: function (alarms){
-
-        },sendCurrentData: function (data){
-
+    var newClient = {client: connection,
+        sendAlarms: function (alarms) {
+            console.log("new alarms");
+            this.client.send("newAlarms", JSON.stringify(alarms));
+        }, sendData: function (data) {
+            this.client.send("newData", JSON.stringify(data));
         } };
 
-    obj.sendCurrentAlarms(alarmsCache)
-    messageBus.receive("newAlarms", obj.sendNewAlarms);
-    messageBus.receive("newData", obj.sendNewData);
+    newClient.sendAlarms(alarmsCache.currentAlarmsState);
+    newClient.sendData(valuesCache.currentDataState);
 
-    connections.push(client);
+    messageBus.receive("MESSAGE_BUS_newAlarms", newClient.sendAlarms.bind(newClient));
+    messageBus.receive("MESSAGE_BUS_newData", newClient.sendData.bind(newClient));
 
-
+    connections.push(newClient);
 
 });
 
