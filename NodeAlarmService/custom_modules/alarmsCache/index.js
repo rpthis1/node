@@ -4,12 +4,13 @@
 var http = require("http");
 var couch = require("couchbase");
 var xml2js = require('xml2js');
+var path = require("path");
+var messageBus = require(path.join(__dirname, "..", "messageBus"));
 
-var db = new couch.Connection({"host":"ec2-54-213-134-12.us-west-2.compute.amazonaws.com" , "bucket":"points2", "password":"101010" }, function (err,couch){
+var db = new couch.Connection({"host": "ec2-54-213-134-12.us-west-2.compute.amazonaws.com", "bucket": "points2", "password": "101010" }, function (err, couch) {
 
     console.log("couch connection.....");
-    if( err)
-    {
+    if (err) {
         console.log("couch connection Error.....");
         throw(err);
     }
@@ -17,25 +18,21 @@ var db = new couch.Connection({"host":"ec2-54-213-134-12.us-west-2.compute.amazo
 
 var parser = new xml2js.Parser();
 
-var activeAlarmsCount= "0";
+var activeAlarmsCount = "0";
 var activeAlarmsArray;
 var req;
-var oldAlarmString ="old";
+var oldAlarmString = "old";
 var newAlarmString = "new";
-var alarmsStore = {activeAlarms:""};
+var alarmsStore = {activeAlarms: ""};
+var currentAlarmsState = {count: 0, alarms: ""};
 
-
-function extractXML(err,result)
-{
+function extractXML(err, result) {
     activeAlarmsArray = result.Data.ActiveAlarmsList;
 
-    if( activeAlarmsArray)
-    {
-        activeAlarmsCount = activeAlarmsArray[0].alarm.length;
-        module.exports.activeAlarmsCount = activeAlarmsCount;
-       // console.log("there are " + activeAlarmsCount + " Alarm(s)");
+    if (activeAlarmsArray) {  // TODO: need to check if this works when alarms = 0
+        currentAlarmsState.count = activeAlarmsArray[0].alarm.length;
+        module.exports.currentAlarmsState = currentAlarmsState;
     }
-
 }
 
 
@@ -45,62 +42,47 @@ function callBack(res) {
     res.on('data',function (chunk) {
         bodyChunks.push(chunk);
     }).on('end', function () {
-
-            console.log("got alarms from API");
-
             var body = Buffer.concat(bodyChunks);
-
+          //  currentAlarmsState.alarms = body;
             parser.parseString(body, extractXML);
-
             db.get('alarms', function (err, resp) {
-
-                if( resp.value)
-                {
-
-                oldAlarmString = resp.value.activeAlarms;
-                newAlarmString = body.toString();
-                 console.log("read it couch.. :" + resp.value.activeAlarms);
-
+                if (resp.value) {
+                    oldAlarmString = resp.value.activeAlarms;
+                    newAlarmString = body.toString();
                 }
                 publishChanges();
-
-
             });
 
         })
 };
 
-function getAlarms()
-{
+function getAlarms() {
     req = http.get("http://54.213.134.12/rest/api/alarm", callBack);
-    req.on("error", function (error)
-    {
+    req.on("error", function (error) {
         console.log("Error" + error)
     });
 }
 
-function publishChanges()
-{
-    if (oldAlarmString !== newAlarmString)
-    {
+function publishChanges() {
+    if (oldAlarmString !== newAlarmString) {
         alarmsStore.activeAlarms = newAlarmString;
-        db.set('alarms', alarmsStore, function(err,resp){
+        db.set('alarms', alarmsStore, function (err, resp) {
 
-            console.log("dp update..");
+            setTimeout(getAlarms, 2000);
 
         });
-        //client.publish("alarmsChannel", activeAlarmsCount.toString());
-        console.log("pub");
+        messageBus.send("MESSAGE_BUS_newAlarms", currentAlarmsState);
     }
-    setTimeout(getAlarms, 2000);
+    else {
+        setTimeout(getAlarms, 2000);
+    }
 }
 
-var initialize = function ()
-{
+var init = function () {
     setTimeout(getAlarms, 1000)
 }
 
-module.exports.init = initialize;
+module.exports.init = init;
 
 
 
