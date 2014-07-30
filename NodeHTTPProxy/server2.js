@@ -1,11 +1,33 @@
 var http = require('http');
 var sys  = require('sys');
 var qs = require('querystring');
-http.createServer(onRequest).listen(8082);
+http.createServer(onRequest).listen(8084);
 
 function onRequest (client_req, client_res) {
 
-    if (client_req.method == 'POST') {
+
+/*
+
+    if () {
+
+        var headers = {};
+        headers["Access-Control-Allow-Origin"] = "*";
+        headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+        headers["Access-Control-Allow-Credentials"] = true;
+        headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+        headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
+        // respond to the request
+        client_res.writeHead(200, headers);
+
+
+
+    }
+
+*/
+
+
+
+    if (client_req.method == 'POST' || client_req.method == 'OPTIONS' ) {
         var body = '';
         client_req.on('data', function (data) {
             body += data;
@@ -27,7 +49,7 @@ function onRequest (client_req, client_res) {
                 host: 'localhost',
                 port: 80,
                 path: "/box/",
-                method: 'POST',
+                method: client_req.method,
                 headers: {"Authorization":"Basic YWRtaW46I0NBUk9NQTEw"}
 
             };
