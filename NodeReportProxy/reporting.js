@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http');
 var cors = require("cors");
+var parseString = require('xml2js').parseString;
 var soap = require('soap');
 var url = 'http://localhost:1290/Services/Intelligence/IBISIntelligence.asmx?wsdl';
 var args = {data: "<parameters><parameter id='granularity' value='month'/><parameter id='normalization' value='Temperature'/><parameter id='hourFilter' value='None'/><parameter id='parentEntities' value='1'/><parameter id='BaselineStartDate' value='7/10/2012'/><parameter id='BaselineEndDate' value='7/15/2012'/><parameter id='ReportingStartDate' value='9/1/2012'/><parameter id='ReportingEndDate' value='12/1/2012'/><parameter id='startDate' value='1/1/2012'/><parameter id='endDate' value='12/31/2012'/></parameters>", provider: "Ipmvp Normalized Delta OAT Report"};
@@ -30,7 +31,34 @@ app.post('/', cors(), function(request, response) {
     soap.createClient(url, function(err, client) {
         client.LoadBaseEntityReportUncompressed(args, function(err, result) {
             console.log(result);
-            response.send(result);
+
+            var xml = result.LoadBaseEntityReportUncompressedResult.toString();
+            parseString(xml, function (err, result) {
+                console.dir(result);
+
+                var arr = [];
+                var baselineData = [];
+                var reportingData = [];
+                var datumArr = result.datums.datum;
+                var dataObj = datumArr[0];
+                var trendArr = dataObj.trend;
+                var newObj = {};
+
+                for ( var obj in trendArr)
+                {
+                    newObj.name =
+                }
+
+
+
+
+
+
+
+                response.send(result);
+            });
+
+
         });
     });
 

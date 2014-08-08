@@ -20,7 +20,8 @@
         "express": "*",
         "soap": "*",
         "cors": "*",
-        "body-parser": "*"
+        "body-parser": "*",
+        "xml2js": "*"
     },
     "analyze": true,
     "license": "MIT",
