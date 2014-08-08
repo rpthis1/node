@@ -91,8 +91,8 @@ app.post('/', cors(), function(request, response) {
                     reportingObj = parentArr[1];
 
                     newBaselineObj = {};
-                    newBaselineObj.name = baselineObj.name;
-                    newBaselineObj.y = baselineObj.value;
+                    newBaselineObj.name = baselineObj.$.name;
+                    newBaselineObj.y = baselineObj.$.value;
                     newBaselineObj.color = "#CCCCCC";
 
                     baselineData.push(newBaselineObj);
@@ -100,8 +100,8 @@ app.post('/', cors(), function(request, response) {
 
 
                     newReportingObj = {};
-                    newReportingObj.name = reportingObj.name;
-                    newReportingObj.y = reportingObj.value;
+                    newReportingObj.name = reportingObj.$.name;
+                    newReportingObj.y = reportingObj.$.value;
                     newReportingObj.color = "#FC9005";
                     reportingData.push(newReportingObj);
                     reportingSeries.data = reportingData;
