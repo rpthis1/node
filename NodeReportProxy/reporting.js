@@ -39,23 +39,81 @@ app.post('/', cors(), function(request, response) {
                 var arr = [];
                 var baselineData = [];
                 var reportingData = [];
+                var seriesArray =[];
                 var datumArr = result.datums.datum;
                 var dataObj = datumArr[0];
                 var trendArr = dataObj.trend;
-                var newObj = {};
+                var newObj;
+                var trendObj;
+                var parentArr;
+                var parentObj;
+                var baselineObj;
+                var reportingObj;
+                var newBaselineObj;
+                var newReportingObj;
 
-                for ( var obj in trendArr)
-                {
-                    newObj.name =
+
+
+
+//
+//                {
+//                    name: 'Point 5',
+//                        color: '#CCCCCC',
+//                    y: 313706
+//
+//                }
+
+
+
+
+                var baselineSeries =   {"name": "Baseline",
+                    type: "column"
+                }
+
+
+                var reportingSeries =   {"name": "Reporting",
+                    type: "column"
                 }
 
 
 
+                for ( var index in trendArr)
+                {
+                    trendObj = trendArr[index];
+
+                    parentArr = trendObj.parent;
+                    parentObj = parentArr[0];
+                    parentArr = parentObj.item;
+                    parentObj = parentArr[0];
+                    parentArr = parentObj.item;
+
+                    baselineObj = parentArr[0];
+                    reportingObj = parentArr[1];
+
+                    newBaselineObj = {};
+                    newBaselineObj.name = baselineObj.name;
+                    newBaselineObj.y = baselineObj.value;
+                    newBaselineObj.color = "#CCCCCC";
+
+                    baselineData.push(newBaselineObj);
+                    baselineSeries.data = baselineData;
+
+
+                    newReportingObj = {};
+                    newReportingObj.name = reportingObj.name;
+                    newReportingObj.y = reportingObj.value;
+                    newReportingObj.color = "#FC9005";
+                    reportingData.push(newReportingObj);
+                    reportingSeries.data = reportingData;
 
 
 
+                }
 
-                response.send(result);
+                seriesArray.push(baselineSeries);
+                seriesArray.push(reportingSeries);
+
+                response.send(seriesArray);
             });
 
 
