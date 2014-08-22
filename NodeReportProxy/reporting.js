@@ -7,6 +7,8 @@ var soap = require('soap');
 var url = 'http://192.168.121.117/IBISIntelligence/Services/Intelligence/IBISIntelligence.asmx?wsdl';
 var args = {data: "<parameters><parameter id='granularity' value='month'/><parameter id='normalization' value='Temperature'/><parameter id='hourFilter' value='None'/><parameter id='parentEntities' value='1'/><parameter id='BaselineStartDate' value='7/10/2012'/><parameter id='BaselineEndDate' value='7/15/2012'/><parameter id='ReportingStartDate' value='9/1/2012'/><parameter id='ReportingEndDate' value='12/1/2012'/><parameter id='startDate' value='1/1/2012'/><parameter id='endDate' value='12/31/2012'/></parameters>", provider: "Ipmvp Normalized Delta OAT Report"};
 
+var paramUtil = require("./custom_modules/paramsUtil");
+
 var bodyParser = require('body-parser')
 
 app.use(cors());
@@ -18,7 +20,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/', cors(), function (request, response) {
-    response.send("Calling GET");
+
 });
 
 app.options('/', cors(), function (request, response) {
@@ -40,7 +42,12 @@ app.post('/api/selections', cors(), function (request, response) {
         label: "New Chiller ECM (7/15/12 - 9/1/12)",
         reportProvider: "Ipmvp Normalized Delta OAT Report",
         parentEntities: "1",
-        default: false
+        default: false,
+        granularity: "month",
+        normalization: "Temperature",
+        hourFilter: "None",
+        startDate: "1/1/2012",
+        endDate: "12/31/2012"
     };
 
     selections.push(s1);
@@ -56,11 +63,15 @@ app.post('/api/selections', cors(), function (request, response) {
         label: "New Boiler ECM (8/15/12 - 10/1/12)",
         reportProvider: "Ipmvp Normalized Delta OAT Report",
         parentEntities: "1",
-        default: false
+        default: false,
+        granularity: "month",
+        normalization: "Temperature",
+        hourFilter: "None",
+        startDate: "1/1/2012",
+        endDate: "12/31/2012"
     };
 
     selections.push(s2);
-
 
 
     var s3 = {
@@ -73,7 +84,12 @@ app.post('/api/selections', cors(), function (request, response) {
         label: "New Lighting System ECM (9/15/12 - 11/1/12)",
         reportProvider: "Ipmvp Normalized Delta OAT Report",
         parentEntities: "1",
-        default: true
+        default: true,
+        granularity: "month",
+        normalization: "Temperature",
+        hourFilter: "None",
+        startDate: "1/1/2012",
+        endDate: "12/31/2012"
     };
 
     selections.push(s3);
@@ -85,8 +101,10 @@ app.post('/api/selections', cors(), function (request, response) {
 
 
 app.post('/', cors(), function (request, response) {
-    console.log("called  poinst");
     soap.createClient(url, function (err, client) {
+        args.data =  paramUtil.parse(request.body);
+        args.provider = request.body.reportProvider;
+
         client.LoadBaseEntityReportUncompressed(args, function (err, result) {
             console.log(result);
 
@@ -154,7 +172,7 @@ app.post('/', cors(), function (request, response) {
                     newReportingObj = {};
                     newReportingObj.name = reportingObj.$.name;
                     newReportingObj.y = Number(reportingObj.$.value);
-                    newReportingObj.color =  'rgba(252,144,5,0.5)';
+                    newReportingObj.color = 'rgba(252,144,5,0.5)';
                     reportingData.push(newReportingObj);
                     reportingSeries.data = reportingData;
 
@@ -167,13 +185,7 @@ app.post('/', cors(), function (request, response) {
 
                 response.send(seriesArray);
             });
-
-
         });
     });
-
-
 });
-
-
 app.listen(3000);

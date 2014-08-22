@@ -1,0 +1,25 @@
+<parameters>
+    <parameter id='granularity' value='month'/>
+    <parameter id='normalization' value='Temperature'/>
+    <parameter id='hourFilter' value='None'/>
+    <parameter id='parentEntities' value='1'/>
+    <parameter id='BaselineStartDate' value='7/10/2012'/>
+    <parameter id='BaselineEndDate' value='7/15/2012'/>
+    <parameter id='ReportingStartDate' value='9/1/2012'/>
+    <parameter id='ReportingEndDate' value='12/1/2012'/>
+    <parameter id='startDate' value='1/1/2012'/>
+    <parameter id='endDate' value='12/31/2012'/>
+</parameters>
+
+<parameters>
+<parameter id='value' value='New Lighting System ECM (9/15/12 - 11/1/12)'/>
+<parameter id='label' value='[object Object]'/>
+<parameter id='BaselineStartDate' value='6/10/2012'/>
+<parameter id='BaselineEndDate' value='9/15/2012'/>
+<parameter id='ReportingStartDate' value='11/1/2012'/>
+<parameter id='ReportingEndDate' value='12/31/2012'/>
+<parameter id='rightLabel' value='Reporting'/>
+<parameter id='leftLabel' value='Baseline'/>
+<parameter id='reportProvider' value='Ipmvp Normalized Delta OAT Report'/>
+<parameter id='parentEntities' value='1'/>
+</parameters>
