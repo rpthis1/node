@@ -145,7 +145,7 @@ app.post('/', cors(), function (request, response) {
                     newBaselineObj = {};
                     newBaselineObj.name = baselineObj.$.name;
                     newBaselineObj.y = Number(baselineObj.$.value);
-                    newBaselineObj.color = "#CCCCCC";
+                    newBaselineObj.color = 'rgba(255, 255, 255, 0.5)';
 
                     baselineData.push(newBaselineObj);
                     baselineSeries.data = baselineData;
@@ -154,7 +154,7 @@ app.post('/', cors(), function (request, response) {
                     newReportingObj = {};
                     newReportingObj.name = reportingObj.$.name;
                     newReportingObj.y = Number(reportingObj.$.value);
-                    newReportingObj.color = "#FC9005";
+                    newReportingObj.color =  'rgba(252,144,5,0.5)';
                     reportingData.push(newReportingObj);
                     reportingSeries.data = reportingData;
 
@@ -177,8 +177,3 @@ app.post('/', cors(), function (request, response) {
 
 
 app.listen(3000);
-
-
-
-
-
